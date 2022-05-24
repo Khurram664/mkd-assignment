@@ -99,7 +99,7 @@ let oldAnswers = [];
 const customerId = document.getElementById("customer-id");
 const customerEmail = document.getElementById("customer-email");
 if (customerId || customerEmail) {
-  fetch(url_preset + "/v1/api/order/customer?id=" + customerId?.innerText + "&email=" + customerEmail?.innerText)
+  fetch(url_preset + "/v1/api/order/customer?id=" + customerId ?.innerText + "&email=" + customerEmail ?.innerText)
     .then((res) => res.json())
     .then((data) => {
       if (data.success && data.data) {
@@ -738,7 +738,7 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
   if (currentQuestionCounter != 0) {
     apiQues = totalQuizQuestions.find((ques) => ques.id == lastShowedQuestionId);
     let lastAnswerObject = dataToReturn.find(function (ansObj) {
-      return ansObj.question.id == apiQues?.id;
+      return ansObj.question.id == apiQues ?.id;
     });
 
     if (lastAnswerObject && !fromDependedOn) {
@@ -806,9 +806,9 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
             $("#page4 .customImgRow .imgRowInner p").append(`${responseHeader}`);
             responseOnGoing = true;
             hasNoResponse = false;
-            // closeResponseTimeout = setTimeout(async () => {
-            //   closeResponse();
-            // }, closeResponseTimeoutCounter);
+            closeResponseTimeout = setTimeout(async () => {
+              closeResponse();
+            }, closeResponseTimeoutCounter);
           }
         } else if (apiQues.answers && apiQues.answers[0].responseBody) {
           $("#page3").css("display", "none");
@@ -834,6 +834,11 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
           responseBody = correctAgeAnswer.response_body;
           showResponse(responseHeader, responseBody);
         }
+
+        closeResponseTimeout = setTimeout(async () => {
+          closeResponse();
+        }, closeResponseTimeoutCounter);
+
       } else if ([4, 5, 6].includes(apiQues.type)) {
         if (fullAnswerObject && (fullAnswerObject.response_header || fullAnswerObject.response_body)) {
           if (fullAnswerObject.response_arguments) {
@@ -915,6 +920,40 @@ function showResponse(responseHead, responseBody, weatherQuestion) {
   }, closeResponseTimeoutCounter);
 }
 
+
+//terminatequiz
+function terminateQuiz() {
+
+  console.log('terminate quiz');
+  clearTimeout(closeResponseTimeout);
+  $("#page1").css("display", "none");
+  $("#page2").css("display", "none");
+  $("#page3").css("display", "none");
+  $("#page4").css("display", "none");
+  $("#page5").css("display", "none");
+  $("#page7").css("display", "none");
+  $("#page6").css("display", "none");
+  $("#page8").css("display", "block");
+  $("#progressBarSection").css("display", "none");
+
+
+
+}
+
+//checkAllergie
+function checkAllergie(v) {
+
+  console.log($(v).data('val'));
+  var val = $(v).data('val');
+
+  if (val == 'Banana' || val == 'Olive' || val == 'Sunflowers')
+    terminateQuiz();
+
+
+
+}
+
+
 // function to close response page
 function closeResponse() {
   responseOnGoing = false;
@@ -975,7 +1014,7 @@ async function askQuestion(totalQuizQuestions, counter, fromBack) {
     const userAnswerToDependedQuestion = dataToReturn.find(function (item) {
       return item.question.id == parseInt(dependedQuesId);
     });
-    if (!userAnswerToDependedQuestion || !userAnswerToDependedQuestion.answer || userAnswerToDependedQuestion.answer?.toLowerCase() != wantedAnswer?.toLowerCase()) {
+    if (!userAnswerToDependedQuestion || !userAnswerToDependedQuestion.answer || userAnswerToDependedQuestion.answer ?.toLowerCase() != wantedAnswer ?.toLowerCase()) {
       currentActiveAnswerType = null;
       isSkipStoreAnswer = true;
       currentQuestionCounter++;
@@ -1208,14 +1247,22 @@ async function askQuestion(totalQuizQuestions, counter, fromBack) {
     currentActiveAnswerType = "typeSelection";
 
     ques.answers.forEach((val, index) => {
+
+      console.log(val);
       if (val.answer) {
         $("#typeSelection .answerInner").append(`
           <div class="selectionOptions">
-            <button data-val="${val.answer}" data-id="${val.id}" class="selectionBtns selectionBtn" >${val.answer}</button>
+            <button data-val="${val.answer}" data-id="${val.id}" class="selectionBtns selectionBtn"  onclick=checkAllergie(this)>${val.answer}</button>
           </div>
         `);
       }
     });
+
+    $("#typeSelection .answerInner").append(`
+          <div class="selectionOptions">
+            <button data-val="None" data-id="0" class="selectionBtns selectionBtn"  onclick=handleNoneOfTheAbove()>None of above</button>
+          </div>
+        `);
 
     if (alreadyAnswered && alreadyAnswered.answer) {
       if (Array.isArray(alreadyAnswered.answer)) {
@@ -1267,7 +1314,7 @@ async function storeAnswer(currentQuestion, currentActiveAnswerType) {
   var temp = [];
   temp["question"] = currentQuestion;
   let answerExists = dataToReturn.findIndex(function (answerObject) {
-    return answerObject.question?.id == temp.question?.id;
+    return answerObject.question ?.id == temp.question ?.id;
   });
   console.log(answerExists);
   if (currentActiveAnswerType == "typeText") {

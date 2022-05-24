@@ -832,9 +832,11 @@ input::-ms-input-placeholder {
   text-align: -moz-center;
 }
 #page4 .customImgRow .imgRowInner {
-  width: max-content;
-  width: -moz-max-content;
-  position: relative;
+  width: 1060px;
+    height:auto;
+    margin: auto;
+    text-align:center;
+    position:relative;
 }
 #page4 .createdByName {
   font: 16px "Necto Mono";
@@ -843,6 +845,14 @@ input::-ms-input-placeholder {
   width: -moz-max-content;
   padding-bottom: 4px;
   border-bottom: 1px solid black;
+
+  position: absolute;
+  margin: auto;
+  top: 90px;
+  left: 81px;
+  right: 0;
+  bottom: 0;
+  height: 22px;
 }
 #page4 .customImgRow img {
   width: 335px;
@@ -911,6 +921,20 @@ input::-ms-input-placeholder {
   /* margin: 180px auto;
   width: 80%; */
   text-align: center;
+}
+
+#page8 .container{
+  background-color: #000;
+  height: 100vh;
+}
+
+#page8 .finalRow {
+  /* margin: 180px auto;
+  width: 80%; */
+  text-align: center;
+  color:white;
+  margin: 0;
+  font: italic 40px "Bradford LL";
 }
 #page6 .finalDesc h3 {
   margin: 0;
